@@ -1,0 +1,72 @@
+---
+title: "Kaggle Titanic Competition Data Exploration"
+output: html_notebook
+---
+## By Julien Dhouti
+
+The data used for analysis in this notebook is from the dataframe **train_edited.csv** which was cleaned by Tomas Bencomo. Further description about how the file was cleaned can be found in his notebook.
+
+```{r}
+# Import necessary libraries
+library(ggplot2)
+
+# import the data
+df <- read.csv('datasets/train_edited.csv')
+head(df)
+str(df)
+```
+
+#### Lets begin by analyzing the relationship between age and fare.
+We looked at the top 38 most expensive fares and tried to see if there was any correlation with age.
+To find these fares, we only analyzed the fares that were 2 standard deviations above the mean. The amount of tickets that matched this description was 38 tickets.
+
+```{r}
+standard_dev <- sd(df$Fare)
+two_sd_over <- mean(df$Fare) + 2*standard_dev
+```
+
+```{r}
+fares <- df$Fare[df$Fare > two_sd_over]
+ages <- df$Age[df$Fare > two_sd_over]
+length(fares)
+```
+
+```{r}
+qplot(Age, Fare, data = df, color = Sex)
+```
+By the looks of the graph, it doesn't appear that there is much of a correlation between the two variables but to confirm, we could determine the coefficient of correlation.
+```{r}
+cor(df$Age, df$Fare)
+```
+Since the coefficient of correlation is not near 1, and much closer to 0, we can assume there is no correlation between the two variables.
+
+#### Analysis: Survival vs. Age
+
+Next, we are going to analyze the surival rate vs. the age of the passenger.
+
+```{r}
+# We can do this by once again generating a plot analysis but by factoring based on survival rate
+survived_ages <- df$Age[df$Survived == 1]
+qplot(survived_ages, geom="histogram", bins = 30)
+```
+From this we can see that the majority of survivers were in between the ages of 20 and 40. This is useless however, unless we know the amount of passengers that were in between each age range.
+
+```{r}
+sum(df$Age <= 10)
+sum(df$Age > 10.0 && df$Age <= 20)
+sum(df$Age > 20 && df$Age <= 30)
+sum(df$Age > 30 && df$Age <= 40)
+sum(df$Age > 40 && df$Age <= 50)
+sum(df$Age > 50 && df$Age <= 60)
+sum(df$Age > 60)
+```
+
+
+
+
+
+
+
+
+
+
